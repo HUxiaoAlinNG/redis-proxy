@@ -15,7 +15,7 @@ func InitSignal() {
 	signal.Notify(exitChan, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT) // , syscall.SIGSTOP
 	for {
 		s := <-exitChan
-		commonLog.Info("get a signal %s", s.String())
+		SLogger.Info().Msg("get a signal %s" + s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT: // , syscall.SIGSTOP
 			return

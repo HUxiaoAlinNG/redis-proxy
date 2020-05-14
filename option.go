@@ -1,15 +1,12 @@
 package main
 
 import (
-	"github.com/naoina/toml"
-	"io/ioutil"
-	"os"
+	"github.com/BurntSushi/toml"
 	"time"
 )
 
 //配置文件
 type Config struct {
-	Logfile string
 	Options map[string]Option
 }
 
@@ -30,6 +27,7 @@ type Option struct {
 	RAddr string `toml:"raddr"`
 	RUser string `toml:"ruser"`
 	RPass string `toml:"rpass"`
+	RDb   string `toml:"rdb"`
 	//远程最大连接数 默认是10秒
 	RPoolSize int `toml:"rpool_size"`
 	//远程KeepAlive间隔时间
@@ -72,20 +70,10 @@ func (opt *Option) init() error {
 	return nil
 }
 
-func LoadConfig(file string) *Config {
-	f, err := os.Open(file)
-	if err != nil {
-		commonLog.Fatal(err)
+func LoadConfig(file string) (*Config, error) {
+	var config = new(Config)
+	if _, err := toml.DecodeFile(file, &config); err != nil {
+		return nil, err
 	}
-	defer f.Close()
-	buf, err := ioutil.ReadAll(f)
-	if err != nil {
-		commonLog.Fatal(err)
-	}
-	config := new(Config)
-	err = toml.Unmarshal(buf, config)
-	if err != nil {
-		commonLog.Fatal(err)
-	}
-	return config
+	return config, nil
 }

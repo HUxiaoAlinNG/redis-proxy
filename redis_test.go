@@ -1,12 +1,11 @@
 package main
 
 import (
-	"github.com/bjdgyc/slog"
 	"testing"
 )
 
 func getRedis(t *testing.T) *Redis {
-	conn, err := NewConn(Option{}, slog.GetStdLog())
+	conn, err := NewConn(Option{})
 	if err != nil {
 		t.Fatal(err)
 	}

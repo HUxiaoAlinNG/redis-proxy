@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"github.com/bjdgyc/slog"
 	"net"
 	"time"
 )
@@ -18,7 +17,8 @@ type Conner interface {
 	Ping() error
 	Auth(string, string) error
 	ReadData()
-	SwapData(local net.Conn) bool
+	Select(string) error
+	SwapData(local net.Conn, opt Option) bool
 }
 
 type Conn struct {
@@ -27,13 +27,12 @@ type Conn struct {
 	Cn        Conner
 	ChanRead  chan *ChanBuf
 	UsedAt    time.Time
-	log       *slog.Logger
 }
 
 //创建新的远程连接
 //如果配置文件包含密码
 //需要进行密码验证
-func NewConn(opt Option, logger *slog.Logger) (*Conn, error) {
+func NewConn(opt Option) (*Conn, error) {
 	netConn, err := net.DialTimeout("tcp", opt.RAddr, 5*time.Second)
 	if err != nil {
 		return nil, err
@@ -49,7 +48,6 @@ func NewConn(opt Option, logger *slog.Logger) (*Conn, error) {
 		RawConn:   tcpConn,
 		UsedAt:    time.Now(),
 		ChanRead:  make(chan *ChanBuf, 1),
-		log:       logger,
 	}
 
 	conn.Cn = &Redis{
@@ -60,6 +58,11 @@ func NewConn(opt Option, logger *slog.Logger) (*Conn, error) {
 	go conn.Cn.ReadData()
 
 	err = conn.Cn.Auth(opt.RUser, opt.RPass)
+	if err != nil {
+		conn.Close()
+		return nil, err
+	}
+	err = conn.Cn.Select(opt.RDb)
 	if err != nil {
 		conn.Close()
 		return nil, err
@@ -100,6 +103,6 @@ func (conn *Conn) Ping() error {
 }
 
 //交换数据
-func (conn *Conn) SwapData(local net.Conn) bool {
-	return conn.Cn.SwapData(local)
+func (conn *Conn) SwapData(local net.Conn, opt Option) bool {
+	return conn.Cn.SwapData(local, opt)
 }
