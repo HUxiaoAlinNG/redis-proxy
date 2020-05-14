@@ -45,4 +45,4 @@ redis-proxy是一个使用golang编写的简单reids代理工具
 
 ## Start
 
-`go build && ./poolproxy -c ./config.toml`
+`go mod download && go build && ./redis-proxy`
