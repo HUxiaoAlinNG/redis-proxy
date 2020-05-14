@@ -249,7 +249,7 @@ func (p *ConnPool) CheckActiveConns() {
 		p.lock.Unlock()
 
 		statsInfo := p.stats.String()
-		SLogger.Debug().Msg(statsInfo)
+		SLogger.Debug().Msg("conn信息" + statsInfo)
 	}
 
 }

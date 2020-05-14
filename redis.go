@@ -34,7 +34,7 @@ func (cn *Redis) Ping() error {
 }
 
 //redis 权限验证
-func (cn *Redis) Auth(user, pass string) error {
+func (cn *Redis) Auth(pass string) error {
 	if pass == "" {
 		return nil
 	}
@@ -217,7 +217,6 @@ func (cn *Redis) SwapData(local net.Conn, opt Option) bool {
 				SLogger.Error().AnErr("remote readChan error:", err)
 				goto FAIL
 			}
-			//fmt.Println(string(cb.Byte))
 			_, err = local.Write(cb.Byte)
 			if err != nil {
 				SLogger.Error().AnErr("local write error:", err)

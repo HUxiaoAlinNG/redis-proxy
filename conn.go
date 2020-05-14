@@ -15,7 +15,7 @@ type ChanBuf struct {
 //链接处理的接口
 type Conner interface {
 	Ping() error
-	Auth(string, string) error
+	Auth(string) error
 	ReadData()
 	Select(string) error
 	SwapData(local net.Conn, opt Option) bool
@@ -57,7 +57,7 @@ func NewConn(opt Option) (*Conn, error) {
 	// 读取数据写入channel
 	go conn.Cn.ReadData()
 
-	err = conn.Cn.Auth(opt.RUser, opt.RPass)
+	err = conn.Cn.Auth(opt.RPass)
 	if err != nil {
 		conn.Close()
 		return nil, err
@@ -82,6 +82,7 @@ func (conn *Conn) GetReadChan() <-chan *ChanBuf {
 }
 
 func (conn *Conn) Write(b []byte) error {
+	SLogger.Info().Msg(string(b))
 	_, err := conn.RawConn.Write(b)
 	conn.UsedAt = time.Now()
 	return err

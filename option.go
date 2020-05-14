@@ -25,7 +25,6 @@ type Option struct {
 
 	// 远程配置
 	RAddr string `toml:"raddr"`
-	RUser string `toml:"ruser"`
 	RPass string `toml:"rpass"`
 	RDb   string `toml:"rdb"`
 	//远程最大连接数 默认是10秒

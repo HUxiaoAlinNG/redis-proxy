@@ -17,7 +17,7 @@ func main() {
 	// 读取配置
 	config, err := LoadConfig("./config.toml")
 	if err != nil {
-		fmt.Println("读取配置失败", err)
+		SLogger.Error().AnErr("读取配置失败", err)
 	}
 
 	for _, opt := range config.Options {
